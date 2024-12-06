@@ -14,9 +14,9 @@ class Database
         if (self::$connection === null) {
             try {
                 $host = 'localhost';
-                $dbname = 'task_scheduler';
-                $username = 'schedulerUser';
-                $password = 'ping@#';
+                $dbname = 'ilife-cell_DB_name';
+                $username = 'ilife_DB';
+                $password = 'Arv%2q935ShimM';
 
                 self::$connection = new PDO(
                     "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
