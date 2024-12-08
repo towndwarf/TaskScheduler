@@ -30,7 +30,7 @@ I assume the following:
 - timestamp is recognizable by ```strtotime```, 'AT' and 'ON'
 - ```task to schedule``` could be of 3 types:  _Run_, _Write to DB_ and without a type, while DB writing is not implemented since not defined by the requirements doc.
 - ```task to schedule``` is a bash executable, which might be run 'as is', no language or command extra recognition is required
-- no repetative or subsequent tasks are expected, once again, no AI or any self-learning matrices for user import to be used
+- no repetative or subsequent tasks are expected, once again, no AI or any self-learning matrix for user import to be used
 
 ---
 
