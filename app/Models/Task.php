@@ -40,8 +40,15 @@ class Task
 
     public function run(): string|false {
         $last_str = null;
-        if (system(escapeshellcmd($this->command),$last_str)) {
+
+        echo $this->command;
+        try {
+            exec($this->command);
+        }
+        catch(\Exception) {
+            if (system(escapeshellcmd($this->command), $last_str)) {
                 return $last_str;
+            }
         }
         return false;
     }

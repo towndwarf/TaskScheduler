@@ -66,12 +66,11 @@ class Scheduler
     public function runDueTasks(): void
     {
         $tasks = $this->getPendingTasks();
-        echo 'tasks: ' . count($tasks);
-        $time_now = new DateTime();
 
+        $time_now = new DateTime();
+        echo $time_now->format('Y-m-d H:i:s');
         foreach ($tasks as $scheduled_task) {
-            if (new DateTime($scheduled_task['scheduled_time']) <= $time_now) {
-                echo 'Executing: ' . $scheduled_task['command'] . PHP_EOL;
+            if ($time_now >= DateTime::createFromFormat('Y-m-d H:i:s', $scheduled_task['scheduled_time'])) {                echo 'Executing: ' . $scheduled_task['command'] . PHP_EOL;
                 $taskDetails = json_decode($scheduled_task['command'], true, 4, JSON_THROW_ON_ERROR);
 
                 $this->changeTaskStatus($scheduled_task['id'], 'before', 'before execution');
@@ -84,12 +83,15 @@ class Scheduler
                     case 'run_command':
                         echo "Running command: {$taskDetails['command']}" . PHP_EOL;
                         exec($taskDetails['command'],$ret_val, $code);
+                        echo $ret_val;
                         $this->changeTaskStatus($scheduled_task['id'], 'completed', json_encode([$code => $ret_val], JSON_THROW_ON_ERROR));
                         break;
                     default:
-
+                        echo 'default action'. PHP_EOL;
                         try {
-                            $task = new Task($scheduled_task['scheduled_time'], $taskDetails['command']);
+                            $task = new Task(
+                                $scheduled_task['scheduled_time'],
+                                $taskDetails['command']);
                             $ret_val = $task->run();
                             if ($ret_val >= 0) {
                                 $this->changeTaskStatus($scheduled_task['id'], 'completed', $ret_val);
@@ -101,6 +103,8 @@ class Scheduler
                         }
                         break;
                 }
+            } else {
+                echo 'no-tasks to run' . $scheduled_task['scheduled_time'];
             }
 
         }
