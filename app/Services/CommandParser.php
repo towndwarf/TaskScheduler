@@ -9,7 +9,7 @@ class CommandParser
     public function parse(string $input): ?array
     {
         // Match "Write to DB in 15 minutes" or "Run 'command' at specific date/time"
-        if (preg_match('/^(write to db|run \'([^\']+)\') (in (\d+ \w+)|at (.+))$/i', $input, $matches)) {
+        if (preg_match('/^(write to db|run \'([^\']+)\') (in (\d+ \w+)|at|on (.+))$/i', $input, $matches)) {
             $action = strtolower($matches[1]) === 'write to db' ? 'write_to_db' : 'run_command';
             $command = $matches[2] ?? null;
 
