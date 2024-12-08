@@ -12,6 +12,7 @@ use UnexpectedValueException;
 
 class Scheduler
 {
+    use AddTaskTrait;
     private PDO $db;
 
     public function __construct()
@@ -19,10 +20,6 @@ class Scheduler
         $this->db = Database::getConnection();
     }
 
-    // for possible future changes time check is placed into a different function
-    private function checkUserTime(string $usertime): int|false {
-        return strtotime($usertime);
-    }
 
     public function addTask(Task $new_task): void
     {
@@ -103,9 +100,9 @@ class Scheduler
                         }
                         break;
                 }
-            } else {
-                echo 'no-tasks to run' . $scheduled_task['scheduled_time'];
-            }
+            } //else {
+                //echo 'no-tasks to run' . $scheduled_task['scheduled_time'];
+            //}
 
         }
     }

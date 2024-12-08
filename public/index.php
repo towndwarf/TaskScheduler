@@ -4,19 +4,12 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Models\Task;
 use App\Commands\AddCommand;
+use App\Services\Scheduler;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $time_offset = $_POST['time_offset'];
     $command = $_POST['command'];
-    $schedule_time = date('Y-m-d H:i:s', strtotime($time_offset));
-
-    $new_task = new Task($schedule_time, $command);
-    $scheduler = new AddCommand();
-    try {
-        echo json_encode($scheduler->handle(['index.php', $schedule_time, $command]), JSON_THROW_ON_ERROR);
-    } catch (JsonException $e) {
-        echo $e->getTraceAsString();
-    }
+    Scheduler::addTaskArguments([$time_offset, 'default', $command]);
 }
 ?>
 
