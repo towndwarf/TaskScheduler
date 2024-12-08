@@ -16,3 +16,25 @@ Example:
 
 Task will be assessed based on the overall architecture of the code, including but not limited to: folder structure, usage of PSR standards, design patterns, overall code cleanliness and general knowledge of PHP.
 
+
+## Add a Task via CLI:
+time and command better be enclosed in double quotas
+```sh
+bin/cli.php task:add +15m "Hello World"
+bin/cli.php task:add "+ 1week 2 days 4 hours" "ls -w"
+bin/cli.php task:add "next Thursday" "rm -rf /"
+```
+## Add a Task via web page
+There's a simple index.php web page at a \public folder
+Tasks might be added via this page. 
+
+## Run Scheduled Tasks via CLI:
+```sh
+bin/cli.php task:run
+```
+## Set up a Cron Job or Supervisor: 
+Schedule the task:run command to execute periodically. 
+e.g. every second:
+```sh
+* * * * * /path/to/bin/cli.php task:run >/dev/null 2>&1
+```
