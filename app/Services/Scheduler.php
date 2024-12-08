@@ -31,7 +31,7 @@ class Scheduler
         $statement = $this->db->prepare($query);
         $statement->execute([
             ':scheduled_time' => $new_task->time,
-            ':command' => '"' . $new_task->command . '"',
+            ':command' => json_encode(['action' => $new_task->action, 'command' => $new_task->command]),
         ]);
     }
 
@@ -72,19 +72,34 @@ class Scheduler
         foreach ($tasks as $scheduled_task) {
             if (new DateTime($scheduled_task['scheduled_time']) <= $time_now) {
                 echo 'Executing: ' . $scheduled_task['command'] . PHP_EOL;
+                $taskDetails = json_decode($scheduled_task['command'], true, 4, JSON_THROW_ON_ERROR);
 
                 $this->changeTaskStatus($scheduled_task['id'], 'before', 'before execution');
+                switch ($taskDetails['action']) {
+                    case 'write_to_db':
+                        echo "Writing to DB..." . PHP_EOL;
+                        // actual DB logic to go here.
+                        break;
 
-                try {
-                    $task = new Task($scheduled_task['scheduled_time'], $scheduled_task['command']);
-                    $ret_val = $task->run();
-                    if ($ret_val >= 0) {
-                        $this->changeTaskStatus($scheduled_task['id'], 'completed', $ret_val);
-                    } else {
-                        $this->changeTaskStatus($scheduled_task['id'], 'failed', $ret_val);
-                    }
-                } catch(Exception $exception) {
-                    $this->changeTaskStatus($scheduled_task['id'], 'failed', 'exception: ' . $exception->getMessage());
+                    case 'run_command':
+                        echo "Running command: {$taskDetails['command']}" . PHP_EOL;
+                        exec($taskDetails['command'],$ret_val, $code);
+                        $this->changeTaskStatus($scheduled_task['id'], 'completed', json_encode([$code => $ret_val], JSON_THROW_ON_ERROR));
+                        break;
+                    default:
+
+                        try {
+                            $task = new Task($scheduled_task['scheduled_time'], $taskDetails['command']);
+                            $ret_val = $task->run();
+                            if ($ret_val >= 0) {
+                                $this->changeTaskStatus($scheduled_task['id'], 'completed', $ret_val);
+                            } else {
+                                $this->changeTaskStatus($scheduled_task['id'], 'failed', $ret_val);
+                            }
+                        } catch (Exception $exception) {
+                            $this->changeTaskStatus($scheduled_task['id'], 'failed', 'exception: ' . $exception->getMessage());
+                        }
+                        break;
                 }
             }
 

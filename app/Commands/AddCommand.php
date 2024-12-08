@@ -22,11 +22,11 @@ class AddCommand
         }
 
         $call_time = date('Y-m-d H:i:s', $timestamp);
-        if ($call_time > date('Y-m-d H:i:s')) {
+        if ($call_time < date('Y-m-d H:i:s')) {
             return ['code' => -1,
                     'msg' => 'TASK NOT ADDED: the given execution time is less than the current timestamp, the command  ($command) was not added'];
         }
-        $new_task = new Task($call_time, $command);
+        $new_task = new Task($call_time, 'default', $command);
         $scheduler = new Scheduler();
         $scheduler->addTask($new_task);
 

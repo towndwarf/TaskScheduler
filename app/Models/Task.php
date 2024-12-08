@@ -8,7 +8,7 @@ CREATE DATABASE task_scheduler;
 USE task_scheduler;
 
 CREATE TABLE `tasks` (
-  `id` int(11) NOT NULL,
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
   `scheduled_time` datetime NOT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -24,9 +24,17 @@ class Task
     public string $time;
     public string $command;
 
-    public function __construct(string $time, string $command)
+    /*public function __construct(string $time, string $command)
     {
         $this->time = $time;
+        $this->command = $command;
+    }*/
+    public string $action;
+
+    public function __construct(string $time, string $action, ?string $command = null)
+    {
+        $this->time = $time;
+        $this->action = $action;
         $this->command = $command;
     }
 
