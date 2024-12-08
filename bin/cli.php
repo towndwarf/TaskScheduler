@@ -11,16 +11,26 @@ $command = $arguments[1] ?? '';
 switch ($command) {
     case 'task:add':
         array_shift($arguments);
-        (new AddCommand())->handle($arguments);
+        try {
+            $ret_val = ((new AddCommand())->handle($arguments));
+            echo '[' . ($ret_val['code'] < 0 ?'FAILED':'SCHEDULED') . ']: ' . $ret_val['msg'];
+        } catch (Exception $exception) {
+            echo '[FAILED]: ' . $exception->getMessage();
+        }
         break;
 
     case 'task:run':
-        (new Scheduler())->runDueTasks();
+        try {
+            (new Scheduler())->runDueTasks();
+            echo '.';
+        } catch (Exception $exception) {
+            echo 'FAILED: ' . $exception->getTraceAsString();
+        }
         break;
 
     default:
         echo 'Available commands:' . PHP_EOL;
-        echo '  task:add <time_offset> <command> - Add a task to the scheduler.' . PHP_EOL;
+        echo '  task:add <time_offset> <command> - Add a task to the scheduler. Task must be a valid executable command.' . PHP_EOL;
         echo '  task:run - Execute due tasks.' . PHP_EOL;
 }
 

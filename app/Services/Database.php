@@ -13,19 +13,19 @@ class Database
     {
         if (self::$connection === null) {
             try {
-                $host = 'localhost';
-                $dbname = 'ilife-cell_DB_name';
-                $username = 'ilife_DB';
-                $password = 'Arv%2q935ShimM';
+                $db_host = 'localhost';
+                $db_name = 'ilife-cell_db_name';
+                $db_username = 'ilife_DB';
+                $db_password = 'Arv%2q935ShimM';
 
                 self::$connection = new PDO(
-                    "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
-                    $username,
-                    $password
+                    "mysql:host=$db_host;dbname=$db_name;charset=utf8mb4",
+                    $db_username,
+                    $db_password
                 );
                 self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            } catch (PDOException $e) {
-                die('DB Connection Failed: ' . $e->getMessage());
+            } catch (PDOException $exception) {
+                die('DB Connection Failed: ' . $exception->getMessage());
             }
         }
 

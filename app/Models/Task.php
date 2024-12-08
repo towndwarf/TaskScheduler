@@ -1,7 +1,24 @@
 <?php
 
 namespace App\Models;
-use PDO;
+
+/* SQL for the Task class
+CREATE DATABASE task_scheduler;
+
+USE task_scheduler;
+
+CREATE TABLE `tasks` (
+  `id` int(11) NOT NULL,
+  `scheduled_time` datetime NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `command` text NOT NULL,
+  `status` enum('pending','postponed','before','completed','failed') DEFAULT 'pending',
+  `log` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ */
+
 class Task
 {
     public string $time;
@@ -13,23 +30,10 @@ class Task
         $this->command = $command;
     }
 
-    public function toArray(): array
-    {
-        return [
-            'time' => $this->time,
-            'command' => $this->command,
-        ];
-    }
-
-    public static function fromArray(array $data): self
-    {
-        return new self($data['time'], $data['command']);
-    }
-
     public function run(): string|false {
-        $laststring = null;
-        if (system(escapeshellcmd($this->command),$laststring)) {
-                return $laststring;
+        $last_str = null;
+        if (system(escapeshellcmd($this->command),$last_str)) {
+                return $last_str;
         }
         return false;
     }

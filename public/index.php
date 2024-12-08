@@ -6,14 +6,17 @@ use App\Models\Task;
 use App\Commands\AddCommand;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $timeOffset = $_POST['time_offset'];
+    $time_offset = $_POST['time_offset'];
     $command = $_POST['command'];
-    $time = date('Y-m-d H:i:s', strtotime($timeOffset));
+    $schedule_time = date('Y-m-d H:i:s', strtotime($time_offset));
 
-    $task = new Task($time, $command);
+    $new_task = new Task($schedule_time, $command);
     $scheduler = new AddCommand();
-    $scheduler->handle([null,$time, $command]);
-
+    try {
+        echo json_encode($scheduler->handle(['index.php', $schedule_time, $command]), JSON_THROW_ON_ERROR);
+    } catch (JsonException $e) {
+        echo $e->getTraceAsString();
+    }
 }
 ?>
 
@@ -30,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <label for="command">Command:</label>
     <input type="text" id="command" name="command" required>
     <br>
-    <button type="submit">Add Task</button>
+    <button type="submit">Schedule Task</button>
 </form>
 </body>
 </html>
